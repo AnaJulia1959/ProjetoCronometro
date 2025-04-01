@@ -6,21 +6,25 @@ class CronometroViewModel {
   final CronometroModel model;
   final FlutterTts flutterTts = FlutterTts();
   String lastSpokenText = "";
+  Timer? _timer;
 
   CronometroViewModel(this.model);
 
   void startStop() {
     if (model.isRunning) {
       model.stop();
+      _timer?.cancel();
       _speak("Cronômetro pausado");
     } else {
       model.start();
+      _startTimer();
       _speak("Cronômetro iniciado");
     }
   }
 
   void reset() {
     model.reset();
+    _timer?.cancel();
     _speak("Cronômetro reiniciado");
   }
 
@@ -29,12 +33,10 @@ class CronometroViewModel {
     _speak("Volta ${model.laps.length}: ${model.formatTime(model.milliseconds)}");
   }
 
-  void updateTime() {
-    if (model.isRunning) {
-      Timer.periodic(Duration(milliseconds: 10), (timer) {
-        model.milliseconds += 10;
-      });
-    }
+  void _startTimer() {
+    _timer = Timer.periodic(Duration(milliseconds: 10), (timer) {
+      model.incrementTime();
+    });
   }
 
   void _speak(String text) async {

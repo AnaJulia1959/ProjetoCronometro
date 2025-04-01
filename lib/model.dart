@@ -27,4 +27,10 @@ class CronometroModel {
     int minutes = (milliseconds ~/ 60000) % 60;
     return "$minutes:${seconds.toString().padLeft(2, '0')},${centiseconds.toString().padLeft(2, '0')}";
   }
+
+  void incrementTime() {
+    if (isRunning) {
+      milliseconds += 10;
+    }
+  }
 }
